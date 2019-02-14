@@ -35,7 +35,7 @@ When everything is setup, have your clients connect to the server using a web br
 #### Disclaimer
 
 The synchronization is not perfect since the server clock is estimated, but it is adaptively convergent in case of devices that have the same network delay.
-It means that the devices may start out of sync, but thei will get along in sync more precisely as soon as many clock and latency measurations are done.
+It means that the devices may start out of sync, but they will get along in sync more precisely as soon as many clock and latency measurations are done.
 The server relies on `io.emit()` in order to broadcast the stream; expect the overall performance to degrade as the number of connection raises
 
 #### Credits
