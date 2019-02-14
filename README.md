@@ -30,6 +30,7 @@ In order to see the execution logs you may run the following command (where `ser
 
      docker logs server_silentdisco_1
 
+When everything is setup, have your clients connect to the server using a web browser
 
 #### Disclaimer
 
@@ -39,7 +40,8 @@ The server relies on `io.emit()` in order to broadcast the stream; expect the ov
 
 #### Credits
 
-_silentdisco_ is using the following third party libraries:
+_silentdisco_ is using the following third party software:
 
+* azuracast https://www.azuracast.com/
 * socket.io https://socket.io/
 * ServerDate https://github.com/NodeGuy/ServerDate
