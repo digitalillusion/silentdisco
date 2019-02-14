@@ -1,0 +1,114 @@
+#
+# AzuraCast Docker Compose Configuration File
+#
+# When updating, you will be prompted to replace this file with a new
+# version; you should do this whenever possible to take advantage of
+# new updates.
+#
+# If you need to customize this file, you can create a new file named:
+#   docker-compose.override.yml
+# with any changes you need to make.
+#
+version: '2.2'
+
+services:
+  web:
+    image: azuracast/azuracast_web_v2:latest
+    # Want to customize the HTTP/S ports? Follow the instructions here:
+    # https://github.com/AzuraCast/AzuraCast/blob/master/SUPPORT.md#use-non-standard-ports
+    ports:
+      - '${AZURACAST_HTTP_PORT:-80}:80'
+      - '${AZURACAST_HTTPS_PORT:-443}:443'
+    depends_on:
+      - mariadb
+      - influxdb
+      - stations
+      - redis
+    env_file: azuracast.env
+    environment: &default-environment
+      AZURACAST_DC_REVISION: 5
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - www_data:/var/azuracast/www
+      - tmp_data:/var/azuracast/www_tmp
+      - station_data:/var/azuracast/stations
+      - shoutcast2_install:/var/azuracast/servers/shoutcast2
+    restart: always
+    logging: &default-logging
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  mariadb:
+    image: azuracast/azuracast_db:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    env_file: azuracast.env
+    environment:
+      <<: *default-environment
+    restart: always
+    logging: *default-logging
+
+  influxdb:
+    image: azuracast/azuracast_influxdb:latest
+    volumes:
+      - influx_data:/var/lib/influxdb
+    restart: always
+    logging: *default-logging
+
+  redis:
+    image: azuracast/azuracast_redis:latest
+    restart: always
+    logging: *default-logging
+
+  stations:
+    container_name: azuracast_stations
+    image: azuracast/azuracast_radio:latest
+    ports:
+    # Uncomment the line below to expose the full range of available station ports.
+    # Note: This is not recommended currently due to performance and memory usage problems with Docker.
+    # - '8000-8500:8000-8500'
+     - '8000:8000'
+     - '8005:8005'
+     - '8006:8006'
+     - '8010:8010'
+     - '8015:8015'
+     - '8016:8016'
+     - '8020:8020'
+     - '8025:8025'
+     - '8026:8026'
+     - '8030:8030'
+     - '8035:8035'
+     - '8036:8036'
+     - '8040:8040'
+     - '8045:8045'
+     - '8046:8046'
+     - '8050:8050'
+     - '8055:8055'
+     - '8056:8056'
+     - '8060:8060'
+     - '8065:8065'
+     - '8066:8066'
+     - '8070:8070'
+     - '8075:8075'
+     - '8076:8076'
+     - '8090:8090'
+     - '8095:8095'
+     - '8096:8096'
+    volumes:
+     - station_data:/var/azuracast/stations
+     - shoutcast2_install:/var/azuracast/servers/shoutcast2
+     - letsencrypt:/etc/nginx/ssl:ro
+    init: true
+    restart: always
+    logging: *default-logging
+
+volumes:
+  db_data: {}
+  influx_data: {}
+  letsencrypt: {}
+  shoutcast2_install: {}
+  station_data: {}
+  tmp_data: {}
+  www_data: {}

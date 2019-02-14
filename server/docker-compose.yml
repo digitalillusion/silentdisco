@@ -1,0 +1,13 @@
+version: '3.3'
+
+services:
+  silentdisco:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 80:3000
+    environment:
+      SERVER_IP: $SERVER_IP
+      STREAM_URL: $STREAM_URL
+    command: npm start

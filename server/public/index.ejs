@@ -1,0 +1,15 @@
+<head>
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+</head>
+<script src="socket.io.slim.js"></script>
+<script src="ServerDate.js"></script>
+<script src="client.js"></script>
+<script>
+var client = new Client({ server: '<%= serverIp %>' })
+</script>
+
+<body>
+    <button onClick="client.start()">Start</button>
+    <div id="clock"></div>
+</body>
+
