@@ -12,10 +12,10 @@ Log in to localhost:8080 and complete the configuration
 
 #### Launch server
 
-The azuracast stream is propagated to the netwok by a nodejs server; it reads the stream and broadcasts it to all connected websockets.
+The azuracast stream is propagated to the network by a nodejs server; it reads the stream and broadcasts it to all connected websockets.
 
 
-In _silentdisco/server_ root folder execute the command to build and run the application, specifying the environment variables 
+In _silentdisco/server_ folder execute the command to build and run the application, specifying the environment variables 
  * _SERVER_IP_: the ip address of the machine on the lan
  * _STREAM_URL_: the URL of the azuracast stream
  
@@ -30,7 +30,7 @@ In order to see the execution logs you may run the following command (where `ser
 
      docker logs server_silentdisco_1
 
-When everything is setup, have your clients connect to the server using a web browser
+When everything is setup, the clients may connect to the server using a web browser
 
 #### Disclaimer
 
