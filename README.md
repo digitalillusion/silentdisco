@@ -12,7 +12,7 @@ Log in to localhost:8080 and complete the configuration
 
 #### Launch server
 
-The azuracast stream is propagated to the P2P netwok by a first peer that acts as a server; it reads the stream and forwards it to all registered peers.
+The azuracast stream is propagated to the netwok by a nodejs server; it reads the stream and broadcasts it to all connected websockets.
 
 
 In _silentdisco/server_ root folder execute the command to build and run the application, specifying the environment variables 
