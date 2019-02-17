@@ -27,12 +27,23 @@ const io = socketIo(server, {
 })
 server.listen(3000);
 
+let connections = []
+io.on('connection', function (socket) {
+  connections.push(socket)
+});
+io.on('disconnect', function (socket) {
+  connections.splice(connections.indexOf(socket), 1)
+});
+
 const mp3stream = request(process.env.STREAM_URL)
 let chunks = [];
+const PACKET_LENGTH = 64
 mp3stream.on('data', chunk => {
     chunks.push(chunk);
-    if (chunks.length > 32) {
-        io.emit('stream_data', { time : Date.now(), data : Buffer.concat(chunks) })
-        chunks = []
+    if (chunks.length > PACKET_LENGTH) {
+        let packet = Buffer.concat(chunks.splice(0, PACKET_LENGTH))
+        for (let socket of connections) {
+            socket.emit('stream_data', { time : Date.now(), data : packet })
+        }
     }
 })

@@ -12,18 +12,28 @@ Client.prototype.start = function() {
 
     ServerDate.synchronizationIntervalDelay = 10000
     var context = new AudioContext();
+    var bestPrecision = 1000
     this.socket.on('stream_data', function(stream){
       var perf = performance.now()
-      var latency = (ServerDate.now() - stream.time)/1000
-      document.getElementById('clock').innerHTML = latency + " " + ServerDate.getPrecision()
+      var latency = 0
+      if (ServerDate.getPrecision() < bestPrecision) {
+        bestPrecision = ServerDate.getPrecision()
+        latency = (ServerDate.now() - stream.time)/1000
+        document.getElementById('clock').innerHTML = latency + " ~" + bestPrecision + " ms"
+      }
 
       context.decodeAudioData(stream.data).then(function(decodedData) {
          var source = context.createBufferSource()
          source.buffer = decodedData
          source.connect(context.destination)
 
-         var delayTot = Math.max(0, -latency - (performance.now() - perf)/1000);
-         source.start(context.currentTime + delayTot);
+         var delayTot = latency + (performance.now() - perf)/1000
+         if (delayTot < 0) {
+            source.start(-delayTot)
+         } else {
+            source.start(0, delayTot)
+         }
+
          console.log('Starting delayed by %f s.', delayTot);
       })
    })
