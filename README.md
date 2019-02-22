@@ -32,11 +32,11 @@ In order to see the execution logs you may run the following command (where `ser
 
 When everything is setup, the clients may connect to the server using a web browser
 
-#### Disclaimer
+#### Performance note
 
-The synchronization is not perfect since the server clock is estimated, but it is adaptively convergent in case of devices that have the same network delay.
-It means that the devices may start out of sync, but they will get along in sync more precisely as soon as many clock and latency measurations are done.
-The server relies on `socket.emit()` in order to broadcast the stream: an acceptable synchronization for a device is obtained when the latency is computed with less than 5 ms of error
+The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size.
+On client side the major bottleneck is represented by the time needed by `AudioContext.decodeAudioData()`, expecially on less modern devices.
+The delay needed to synchronize the streams is applied with amortization, otherwise would result in choppy playback (which actually becomes sensible above 0.5 seconds of latency)
 
 #### Credits
 
@@ -44,4 +44,4 @@ _silentdisco_ is using the following third party software:
 
 * azuracast https://www.azuracast.com/
 * socket.io https://socket.io/
-* ServerDate https://github.com/NodeGuy/ServerDate
+* timesync https://github.com/enmasseio/timesync

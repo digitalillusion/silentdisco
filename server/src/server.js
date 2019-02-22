@@ -4,6 +4,7 @@ const path = require('path');
 const stream = require('stream');
 const express = require('express');
 const socketIo = require('socket.io');
+const timesyncServer = require('timesync/server');
 
 const app = express()
 const viewsDir = path.join(__dirname, '..', 'public')
@@ -16,6 +17,7 @@ app.get('/', function(req, res) {
         serverIp : process.env.SERVER_IP
     })
 })
+app.use('/timesync', timesyncServer.requestHandler);
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -42,8 +44,6 @@ mp3stream.on('data', chunk => {
     chunks.push(chunk);
     if (chunks.length > PACKET_LENGTH) {
         let packet = Buffer.concat(chunks.splice(0, PACKET_LENGTH))
-        for (let socket of connections) {
-            socket.emit('stream_data', { time : Date.now(), data : packet })
-        }
+        io.emit('stream_data', packet)
     }
 })
