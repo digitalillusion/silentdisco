@@ -36,7 +36,7 @@ When everything is setup, the clients may connect to the server using a web brow
 
 The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size.
 On client side the major bottleneck is represented by the time needed by `AudioContext.decodeAudioData()`, expecially on less modern devices.
-The delay needed to synchronize the streams is applied with amortization, otherwise would result in choppy playback (which actually becomes sensible above 0.5 seconds of latency)
+The delay needed to synchronize the streams is applied by mean of time-stretch; it means that the duration of each received sample will be shorter if the client is lagging behind 
 
 #### Credits
 
@@ -45,3 +45,4 @@ _silentdisco_ is using the following third party software:
 * azuracast https://www.azuracast.com/
 * socket.io https://socket.io/
 * timesync https://github.com/enmasseio/timesync
+* soundtouch https://github.com/jakubfiala/soundtouch-js
