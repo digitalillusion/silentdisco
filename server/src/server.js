@@ -38,12 +38,13 @@ io.on('disconnect', function (socket) {
 });
 
 const mp3stream = request(process.env.STREAM_URL)
-let chunks = [];
-const PACKET_LENGTH = 64
+let chunks = Buffer.alloc(0)
+const PACKET_LENGTH = 8192 * 3
 mp3stream.on('data', chunk => {
-    chunks.push(chunk);
+    chunks = Buffer.concat([chunks, chunk])
     if (chunks.length > PACKET_LENGTH) {
-        let packet = Buffer.concat(chunks.splice(0, PACKET_LENGTH))
+        let packet = chunks.slice(0, PACKET_LENGTH)
+        chunks = chunks.slice(PACKET_LENGTH)
         io.emit('stream_data', packet)
     }
 })
