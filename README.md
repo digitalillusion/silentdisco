@@ -34,9 +34,10 @@ When everything is setup, the clients may connect to the server using a web brow
 
 #### Performance note
 
-The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size.
+The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size. 
+In order to reduce the amount of exchanged data, a mono mixdown is performed.
 On client side the major bottleneck is represented by the time needed by `AudioContext.decodeAudioData()`, expecially on less modern devices.
-The delay needed to synchronize the streams is applied with amortization, otherwise would result in choppy playback (which actually becomes sensible above 0.5 seconds of latency)
+The delay needed to synchronize the streams is applied with amortization, otherwise would result in choppy playback: it takes around a minute to synchronize two devices having 500 ms of difference in latency
 
 #### Credits
 

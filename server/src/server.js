@@ -5,6 +5,7 @@ const stream = require('stream');
 const express = require('express');
 const socketIo = require('socket.io');
 const timesyncServer = require('timesync/server');
+const lame = require('lame');
 
 const app = express()
 const viewsDir = path.join(__dirname, '..', 'public')
@@ -38,9 +39,21 @@ io.on('disconnect', function (socket) {
 });
 
 const mp3stream = request(process.env.STREAM_URL)
+
 let chunks = Buffer.alloc(0)
-const PACKET_LENGTH = 8192 * 3
-mp3stream.on('data', chunk => {
+const PACKET_LENGTH = 8192
+
+mp3stream
+  .pipe(new lame.Decoder())
+  .pipe(new lame.Encoder({
+    channels: 2,
+    bitDepth: 16,
+    sampleRate: 44100,
+    bitRate: 64,
+    outSampleRate: 22050,
+    mode: lame.MONO
+  }))
+  .on('data', chunk => {
     chunks = Buffer.concat([chunks, chunk])
     if (chunks.length > PACKET_LENGTH) {
         let packet = chunks.slice(0, PACKET_LENGTH)
@@ -48,3 +61,4 @@ mp3stream.on('data', chunk => {
         io.emit('stream_data', packet)
     }
 })
+
