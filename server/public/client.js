@@ -4,7 +4,7 @@ function Client(params) {
   });
   this.ts = timesync.create({
     server: '/timesync',
-    interval: 60000
+    interval: 60000 * 30
   });
 }
 
@@ -15,7 +15,7 @@ Client.prototype.start = function() {
     this.started = true
 
     var context = new AudioContext();
-    var latency = 0
+    var latency = 0, bufferTime = 2, next = 0
     var ts = this.ts
     ts.on('change', function (offset) {
       latency = -offset/1000000
@@ -23,6 +23,7 @@ Client.prototype.start = function() {
 
     this.socket.on('stream_data', function(stream){
       var perf = performance.now()
+
       context.decodeAudioData(stream).then(function(decodedData) {
          var st = new SoundTouch()
          var filter = new SimpleFilter(new WebAudioBufferSource(decodedData), st)
@@ -44,8 +45,9 @@ Client.prototype.start = function() {
          var source = context.createBufferSource()
          source.buffer = buffer
          source.connect(context.destination)
-         source.start(0)
-         latency = Math.max(latency, latency-delayTot)
+
+         source.start(Math.max(0, next))
+         next = context.currentTime + buffer.duration + bufferTime
       })
    })
 

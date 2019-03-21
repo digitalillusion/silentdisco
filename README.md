@@ -34,7 +34,8 @@ When everything is setup, the clients may connect to the server using a web brow
 
 #### Performance note
 
-The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size.
+The server relies on `io.emit()` in order to broadcast the stream as fast as possible with fixed packet size. 
+In order to reduce the amount of exchanged data, a mono mixdown is performed.
 On client side the major bottleneck is represented by the time needed by `AudioContext.decodeAudioData()`, expecially on less modern devices.
 The delay needed to synchronize the streams is applied by mean of time-stretch; it means that the duration of each received sample will be shorter if the client is lagging behind 
 
